@@ -10,13 +10,15 @@ REST = {"d": [4,5]}
 TOTAL={"a": [1,2,3,1,1], "b": [3,4,2,1,3,5], "c":[1,7], "d": [1,3,4,4,5]}
 
 meta = get_meta_dict(TRAIN, VAL, TEST, REST,TOTAL)
-print(meta)
+#print(meta)
 
 full=get_duration_stats(TOTAL, TRAIN, VAL, TEST, REST)
 print(full.head())
 
-# df = get_duration_df(meta)
-# print(df.head())
+df = get_duration_df(meta)
+#print(df.head())
+dist = get_dist_df(df, TRAIN, VAL, TEST, REST, TOTAL)
+#print(dist.head())
 # reldf = get_rel_duration_df(df)
 # print(reldf.head())
 # mindf=get_min_df(meta)

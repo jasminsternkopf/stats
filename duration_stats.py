@@ -11,12 +11,14 @@ def get_duration_stats(data_total: Dict[str, List[_T]], data_trn: Dict[str, List
   meta_dataset = get_meta_dict(data_trn, data_val, data_tst, data_rst, data_total)
   duration_df = get_duration_df(meta_dataset)
   rel_duration_df = get_rel_duration_df(duration_df)
+  dist_df = get_dist_df(duration_df, data_trn, data_val, data_tst, data_rst, data_total)
   min_df = get_min_df(meta_dataset)
   max_df = get_max_df(meta_dataset)
   mean_df = get_mean_df(meta_dataset)
   full_df = pd.concat([
       duration_df,
       rel_duration_df.loc[:, rel_duration_df.columns != "SPEAKER"],
+      dist_df.loc[:, dist_df.columns != "SPEAKER"],
       min_df.loc[:, min_df.columns != "SPEAKER"],
       max_df.loc[:, max_df.columns != "SPEAKER"],
       mean_df.loc[:, mean_df.columns != "SPEAKER"]
@@ -71,12 +73,20 @@ def get_minimum_durations_for_every_speaker_for_all_sets(dataset: Dict[str, List
 
 def get_minimum_durations_for_one_speaker_for_all_sets(speaker,durations_list: List[List[_T]]) -> List:
   mins = [min(durations) if durations != [0] else "-" for durations in durations_list]
-  #mins.append(min(mins)) #so that we don't have to compute it for total set
   mins.insert(0, speaker)
   return mins
 
-def get_dist():
-  pass
+def get_dist_df(durations_df: pd.DataFrame,data_trn, data_val, data_tst, data_rst, data_total) -> pd.DataFrame:
+  df = durations_df.loc[:, durations_df.columns != "SPEAKER"].copy()
+  df.rename(columns = {"DUR TRN": "DIST TRN"}, inplace = True)
+  dataset_lengths = [get_whole_dataset_duration(dataset) for dataset in [data_trn, data_val, data_tst, data_rst, data_total]]
+  df = 100* df.div(dataset_lengths)
+  df.insert(loc=0, column="SPEAKER", value = durations_df.loc[:, durations_df.columns=="SPEAKER"])
+  return df
+
+def get_whole_dataset_duration(dataset: Dict[str, List[List[_T]]]) -> _T:
+  duration_for_each_speaker = [sum(durations) for durations in list(dataset.values())]
+  return sum(duration_for_each_speaker)
 
 def get_rel_duration_df(durations_df: pd.DataFrame) -> pd.DataFrame:
   df_as_row_wise_array = durations_df.to_numpy()
@@ -106,7 +116,6 @@ def get_duration_sums_for_every_speaker_for_all_sets(dataset: Dict[str, List[Lis
 
 def get_duration_sums_for_one_speaker_for_all_sets(speaker,durations_list: List[List[_T]]) -> List:
   duration_sums = [sum(durations) for durations in durations_list]
-  #duration_sums.append(sum(duration_sums)) #so that we don't have to compute it for total set
   duration_sums.insert(0, speaker)
   return duration_sums
 
