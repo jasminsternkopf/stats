@@ -52,8 +52,8 @@ def get_utter_occs_for_all_sets(symb: _T, data_trn: List[List[_T]], data_val: Li
     return utter_occs
 
 def get_utter_occs_of_symbol_in_one_set(symb: _T, dataset: List[List[_T]]) -> int:
-    symb_is_in_single_list = [symb in single_list for single_list in dataset]
-    return sum(symb_is_in_single_list)
+    symb_is_in_sublist = [symb in sublist for sublist in dataset]
+    return sum(symb_is_in_sublist)
 
 def get_dist_among_other_symbols_df_of_all_symbols(occs_df: pd.DataFrame, data_trn: List[List[_T]], data_val: List[List[_T]], data_tst: List[List[_T]], data_rst: List[List[_T]]) -> pd.DataFrame:
     df_as_row_wise_array = occs_df.to_numpy()
@@ -71,13 +71,13 @@ def get_dists_among_other_symbols(occs_of_symb: List[int], total_numb_of_symbs: 
     return dists.tolist()
 
 def get_total_numbers_of_symbols_for_all_sets(data_trn: List[List[_T]], data_val: List[List[_T]], data_tst: List[List[_T]], data_rst: List[List[_T]]) ->List[int]:
-    total_symb_numbers = [total_number_of_symbols_in_double_list(dataset) for dataset in [data_trn, data_val, data_tst, data_rst]]
+    total_symb_numbers = [total_number_of_symbols_in_dataset(dataset) for dataset in [data_trn, data_val, data_tst, data_rst]]
     total_symb_numbers.append(sum(total_symb_numbers))
     return total_symb_numbers
 
-def total_number_of_symbols_in_double_list(double_list: List[List[_T]]) -> int:
-    lens_of_single_lists = [len(single_list) for single_list in double_list]
-    return sum(lens_of_single_lists)
+def total_number_of_symbols_in_dataset(dataset: List[List[_T]]) -> int:
+    lens_of_sublists = [len(sublist) for sublist in dataset]
+    return sum(lens_of_sublists)
 
 def get_rel_occ_df_of_all_symbols(occs_df: pd.DataFrame) -> pd.DataFrame:
     df_as_row_wise_array = occs_df.to_numpy()
@@ -89,7 +89,7 @@ def get_rel_occ_df_of_all_symbols(occs_df: pd.DataFrame) -> pd.DataFrame:
     df = pd.DataFrame(df_lines, columns = ['SYMB','REL_OCC TRN', 'VAL', 'TST', 'RST'])
     return df
 
-def get_relative_occs_for_all_sets(occs_list: np.array) -> List[float]: #List[int]
+def get_relative_occs_for_all_sets(occs_list: np.array) -> List[float]:
     relative_occs=100*np.array(occs_list[:-1])/occs_list[-1]
     return relative_occs.tolist()
 
@@ -108,6 +108,6 @@ def get_occs_for_all_sets(symb: _T, data_trn: List[List[_T]], data_val: List[Lis
     occs.append(sum(occs))
     return occs
 
-def get_occs_of_symb_in_one_set(symb: _T, double_list: List[List[_T]]) -> int:
-    occs_of_symb_in_lists_of_double_list = [single_list.count(symb) for single_list in double_list]
-    return sum(occs_of_symb_in_lists_of_double_list)
+def get_occs_of_symb_in_one_set(symb: _T, dataset: List[List[_T]]) -> int:
+    occs_of_symb_in_sublists = [sublist.count(symb) for sublist in dataset]
+    return sum(occs_of_symb_in_sublists)

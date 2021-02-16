@@ -11,8 +11,7 @@ from ngram_stats import *
 class UnitTests(unittest.TestCase):
 
     def test_get_occs_of_symb_in_one_set(self):
-        double_list = [["q","b","a"],["a","a"],["b"]]
-        res = get_occs_of_symb_in_one_set("a", double_list)
+        res = get_occs_of_symb_in_one_set("a", TRAIN)
 
         self.assertEqual(res, 3)
 
@@ -98,5 +97,5 @@ if __name__ == '__main__':
   rel_utter_occ_df= get_rel_utter_occ_df_of_all_symbols(utter_occ_df)
   #print(rel_utter_occ_df.head())
 
-  full_df=get_ngram_stats(SYMBOLS, TRAIN, VAL, TEST, REST)
+  full_df = get_ngram_stats(SYMBOLS, TRAIN, VAL, TEST, REST)
   print(full_df.head())
