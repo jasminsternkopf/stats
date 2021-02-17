@@ -23,10 +23,24 @@ def get_ngram_stats(symbols: List[_T], data_trn: List[List[_T]], data_val: List[
                 join='inner')
     return full_df
 
-def get_uniform_distr_df_for_occs(symbols: List[_T], occ_df: pd.DataFrame) -> pd.DataFrame:
-    number_of_all_possible_symbols = len(symbols)
-    all_occs_per_set = occ_df.iloc[-1,1:]
+def get_rel_uniform_distr_df_for_occs(symbols) -> pd.DataFrame:
+    percentage = 100/len(symbols)
+    #df = 
+    pass
 
+def get_uniform_distr_df_for_occs(symbols: List[_T], occ_df: pd.DataFrame) -> pd.DataFrame:
+    uni_distr_df = df_with_uni_distr(symbols, occ_df)
+    uni_distr_df.columns = ['SYMB','OCC_UNI_DISTR TRN', 'VAL', 'TST', 'RST', 'TOTAL']
+    return uni_distr_df
+
+def df_with_uni_distr(symbols: List[_T], df: pd.DataFrame) -> pd.DataFrame:
+    number_of_all_possible_symbols = len(symbols)
+    assert number_of_all_possible_symbols != 0
+    last_line_of_df = df.iloc[-1,1:]
+    uni_distr_df = df.copy()
+    uniform_distr_line = last_line_of_df/number_of_all_possible_symbols
+    uni_distr_df.iloc[:-1,1:]=[uniform_distr_line]*number_of_all_possible_symbols
+    return uni_distr_df
 
 def get_rel_utter_occ_df_of_all_symbols(utter_occs_df: pd.DataFrame) -> pd.DataFrame:
     df_as_row_wise_array = utter_occs_df.to_numpy()
@@ -39,6 +53,8 @@ def get_rel_utter_occ_df_of_all_symbols(utter_occs_df: pd.DataFrame) -> pd.DataF
     return df
 
 def get_relative_utter_occs_for_all_sets(utter_occs_list: List[int]) -> List[float]:
+    if utter_occs_list[-1] == 0:
+        return [0]*(len(utter_occs_list)-1)
     relative_utter_occs=100*np.array(utter_occs_list[:-1])/utter_occs_list[-1]
     return relative_utter_occs.tolist()
 
@@ -74,7 +90,11 @@ def get_dist_among_other_symbols_df_of_all_symbols(occs_df: pd.DataFrame, data_t
     return df
 
 def get_dists_among_other_symbols(occs_of_symb: List[int], total_numb_of_symbs: List[int]) -> List[float]:
-    dists = np.array(occs_of_symb)/np.array(total_numb_of_symbs)*100
+    division_possible = [number != 0 for number in total_numb_of_symbs]
+    dists = np.divide(np.array(occs_of_symb),np.array(total_numb_of_symbs),where=division_possible)
+    dist_is_None = [not value for value in division_possible]
+    dists[dist_is_None]=0
+    dists *= 100
     return dists.tolist()
 
 def get_total_numbers_of_symbols_for_all_sets(data_trn: List[List[_T]], data_val: List[List[_T]], data_tst: List[List[_T]], data_rst: List[List[_T]]) ->List[int]:
@@ -97,6 +117,8 @@ def get_rel_occ_df_of_all_symbols(occs_df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 def get_relative_occs_for_all_sets(occs_list: np.array) -> List[float]:
+    if occs_list[-1] == 0:
+        return [0]*(len(occs_list)-1)
     relative_occs=100*np.array(occs_list[:-1])/occs_list[-1]
     return relative_occs.tolist()
 

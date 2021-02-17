@@ -108,7 +108,7 @@ def get_dist_df(durations_df: pd.DataFrame) -> pd.DataFrame:
   dataset_lengths = df.sum()
   df = 100* df.div(dataset_lengths)
   df.insert(loc=0, column=FIRST_COL, value = durations_df.iloc[:-1,0])
-  last_line = df.sum()
+  last_line = df.sum()*100
   df=df.append(last_line, ignore_index=True)
   df.iloc[-1,0] ="all"
   df.replace(0,NOT_EXISTING,inplace=True)

@@ -83,7 +83,7 @@ if __name__ == '__main__':
   unittest.TextTestRunner(verbosity=2).run(suite)
 
   occ_df = get_occ_df_of_all_symbols(SYMBOLS, TRAIN, VAL, TEST, REST)
-  #print(occ_df.head())
+  print(occ_df.head())
 
   rel_occ_df = get_rel_occ_df_of_all_symbols(occ_df)
   #print(rel_occ_df.head())
@@ -102,3 +102,6 @@ if __name__ == '__main__':
 
   uni_distr_occ_df = get_uniform_distr_df_for_occs(SYMBOLS, occ_df)
   print(uni_distr_occ_df)
+
+  uni_distr_utt_df = get_uniform_distr_df_for_occs(SYMBOLS, utter_occ_df)
+  print(uni_distr_utt_df)
