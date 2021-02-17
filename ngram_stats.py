@@ -86,7 +86,6 @@ def get_dist_among_other_symbols_df_of_all_symbols(occs_df: pd.DataFrame, data_t
         dist_list.insert(0, row[0])
         df_lines.append(dist_list)
     df = pd.DataFrame(df_lines, columns = ['SYMB','DIST TRN', 'VAL', 'TST', 'RST', 'TOTAL'])
-    df = add_all_line_as_sum_of_previous_lines(df)
     return df
 
 def get_dists_among_other_symbols(occs_of_symb: List[int], total_numb_of_symbs: List[int]) -> List[float]:
