@@ -106,7 +106,7 @@ def get_dist_df(durations_df: pd.DataFrame) -> pd.DataFrame:
   df.columns=['DIST TRN', 'VAL', 'TST', 'RST','TOTAL']
   dataset_lengths = df.sum()
   df = 100* df.div(dataset_lengths)
-  df.insert(loc=0, column=FIRST_COL, value = durations_df.loc[0:len(durations_df.index)-2, durations_df.columns==FIRST_COL])
+  df.insert(loc=0, column=FIRST_COL, value = durations_df.iloc[:-1,0])
   last_line = df.sum()
   df=df.append(last_line, ignore_index=True)
   df.iloc[-1,0] ="all"
