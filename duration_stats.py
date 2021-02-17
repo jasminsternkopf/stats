@@ -7,6 +7,7 @@ from typing import TypeVar, Dict, List
 
 FIRST_COL = "SPEAKER"
 _T = TypeVar('_T')
+NOT_EXISTING = "-"
 
 def get_duration_stats(speakers: List[str], data_trn: Dict[str, List[_T]], data_val: Dict[str, List[_T]], data_tst: Dict[str, List[_T]], data_rst: Dict[str, List[_T]], data_total: Dict[str, List[_T]]) -> pd.DataFrame:
   meta_dataset = get_meta_dict(speakers, data_trn, data_val, data_tst, data_rst, data_total)
@@ -33,15 +34,15 @@ def get_mean_df(speakers: List[str], meta_dataset) -> pd.DataFrame:
   lines_of_df = get_mean_durations_for_every_speaker_for_all_sets(speakers, meta_dataset)
   df = pd.DataFrame(lines_of_df, columns=['SPEAKER', 'MEAN TRN', 'VAL', 'TST', 'RST','TOTAL'])
   last_line = mean_of_df(df)
-  last_line.replace(0,"-",inplace=True)
+  last_line.replace(0,NOT_EXISTING,inplace=True)
   df=df.append(last_line, ignore_index=True)
   df.iloc[-1,0] ="all"
   return df
 
 def mean_of_df(data: pd.DataFrame) -> pd.Series:
-  data_without_hyphen = data.replace("-", NaN)
+  data_without_hyphen = data.replace(NOT_EXISTING, NaN)
   means = data_without_hyphen.mean()
-  means.replace(NaN, "-", inplace=True)
+  means.replace(NaN, NOT_EXISTING, inplace=True)
   return means
 
 def get_mean_durations_for_every_speaker_for_all_sets(speakers: List[str], dataset: Dict[str, List[List[_T]]]) -> List[List]:
@@ -49,7 +50,7 @@ def get_mean_durations_for_every_speaker_for_all_sets(speakers: List[str], datas
   return all_means
 
 def get_mean_durations_for_one_speaker_for_all_sets(speaker,durations_list: List[List[_T]]) -> List:
-  means = [mean(durations) if durations != [0] else "-" for durations in durations_list]
+  means = [mean(durations) if durations != [0] else NOT_EXISTING for durations in durations_list]
   means.insert(0, speaker)
   return means
 
@@ -57,15 +58,15 @@ def get_max_df(speakers: List[str], meta_dataset) -> pd.DataFrame:
   lines_of_df = get_maximum_durations_for_every_speaker_for_all_sets(speakers, meta_dataset)
   df = pd.DataFrame(lines_of_df, columns=['SPEAKER', 'MAX TRN', 'VAL', 'TST', 'RST','TOTAL'])
   last_line = maximum_of_df(df)
-  last_line.replace(0,"-",inplace=True)
+  last_line.replace(0,NOT_EXISTING,inplace=True)
   df=df.append(last_line, ignore_index=True)
   df.iloc[-1,0] ="all"
   return df
 
 def maximum_of_df(data: pd.DataFrame) -> pd.Series:
-  data_without_hyphen = data.replace("-", 0)
+  data_without_hyphen = data.replace(NOT_EXISTING, 0)
   maxs = data_without_hyphen.max()
-  maxs.replace(0, "-", inplace=True)
+  maxs.replace(0, NOT_EXISTING, inplace=True)
   return maxs
 
 def get_maximum_durations_for_every_speaker_for_all_sets(speakers: List[str], dataset: Dict[str, List[List[_T]]]) -> List[List]:
@@ -73,7 +74,7 @@ def get_maximum_durations_for_every_speaker_for_all_sets(speakers: List[str], da
   return all_maxima
 
 def get_maximum_durations_for_one_speaker_for_all_sets(speaker,durations_list: List[List[_T]]) -> List:
-  maxs = [max(durations) if durations != [0] else "-" for durations in durations_list]
+  maxs = [max(durations) if durations != [0] else NOT_EXISTING for durations in durations_list]
   maxs.insert(0, speaker)
   return maxs
 
@@ -86,9 +87,9 @@ def get_min_df(speakers: List[str], meta_dataset) -> pd.DataFrame:
   return df
 
 def minimum_of_df(data: pd.DataFrame) -> pd.Series:
-  data_without_hyphen = data.replace("-", Infinity)
+  data_without_hyphen = data.replace(NOT_EXISTING, Infinity)
   mins = data_without_hyphen.min()
-  mins.replace(Infinity, "-", inplace=True)
+  mins.replace(Infinity, NOT_EXISTING, inplace=True)
   return mins
 
 def get_minimum_durations_for_every_speaker_for_all_sets(speakers: List[str], dataset: Dict[str, List[List[_T]]]) -> List[List]:
@@ -96,12 +97,12 @@ def get_minimum_durations_for_every_speaker_for_all_sets(speakers: List[str], da
   return all_minima
 
 def get_minimum_durations_for_one_speaker_for_all_sets(speaker,durations_list: List[List[_T]]) -> List:
-  mins = [min(durations) if durations != [0] else "-" for durations in durations_list]
+  mins = [min(durations) if durations != [0] else NOT_EXISTING for durations in durations_list]
   mins.insert(0, speaker)
   return mins
 
 def get_dist_df(durations_df: pd.DataFrame) -> pd.DataFrame:
-  durations_df.replace("-",0,inplace=True)
+  durations_df.replace(NOT_EXISTING,0,inplace=True)
   df = durations_df.iloc[:-1,1:].copy()
   df.columns=['DIST TRN', 'VAL', 'TST', 'RST','TOTAL']
   dataset_lengths = df.sum()
@@ -110,9 +111,9 @@ def get_dist_df(durations_df: pd.DataFrame) -> pd.DataFrame:
   last_line = df.sum()
   df=df.append(last_line, ignore_index=True)
   df.iloc[-1,0] ="all"
-  df.replace(0,"-",inplace=True)
-  df.replace(NaN,"-",inplace=True)
-  durations_df.replace(0,"-",inplace=True)
+  df.replace(0,NOT_EXISTING,inplace=True)
+  df.replace(NaN,NOT_EXISTING,inplace=True)
+  durations_df.replace(0,NOT_EXISTING,inplace=True)
   return df
 
 def get_whole_dataset_duration(dataset: Dict[str, List[List[_T]]]) -> _T:
@@ -120,7 +121,7 @@ def get_whole_dataset_duration(dataset: Dict[str, List[List[_T]]]) -> _T:
   return sum(duration_for_each_speaker)
 
 def get_rel_duration_df(durations_df: pd.DataFrame) -> pd.DataFrame:
-  durations_df.replace("-",0,inplace=True)
+  durations_df.replace(NOT_EXISTING,0,inplace=True)
   df_as_row_wise_array = durations_df.to_numpy()
   df_lines = []
   for row in df_as_row_wise_array:
@@ -128,8 +129,8 @@ def get_rel_duration_df(durations_df: pd.DataFrame) -> pd.DataFrame:
       rel_durations_list.insert(0, row[0])
       df_lines.append(rel_durations_list)
   df = pd.DataFrame(df_lines, columns = ['SPEAKER','REL_DUR TRN', 'VAL', 'TST', 'RST'])
-  df.replace(0,"-",inplace=True)
-  durations_df.replace(0,"-",inplace=True)
+  df.replace(0,NOT_EXISTING,inplace=True)
+  durations_df.replace(0,NOT_EXISTING,inplace=True)
   return df
 
 def get_relative_durations_for_all_sets(duration_list: List[_T]) -> List:
@@ -145,7 +146,7 @@ def get_duration_df(speakers: List[str], meta_dataset: Dict[str, List[List[_T]]]
   last_line = df.sum()
   df=df.append(last_line, ignore_index=True)
   df.iloc[-1,0] ="all"
-  df.replace(0,"-",inplace=True)
+  df.replace(0,NOT_EXISTING,inplace=True)
   return df
 
 def get_duration_sums_for_every_speaker_for_all_sets(speakers: List[str], dataset: Dict[str, List[List[_T]]]) -> List[List]:

@@ -28,7 +28,7 @@ df = get_duration_df(SPEAKERS, meta)
 #print(type(dmin))
 #print(df.sum())#["VAL","TST","RST"]
 dist = get_dist_df(df)
-print(dist.head(10))
+#print(dist.head(10))
 reldf = get_rel_duration_df(df)
 #print(reldf.head(10))
 # mindf=get_min_df(meta)
