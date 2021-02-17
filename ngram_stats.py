@@ -12,12 +12,16 @@ def get_ngram_stats(symbols: List[_T], data_trn: List[List[_T]], data_val: List[
     dist_df = get_dist_among_other_symbols_df_of_all_symbols(occ_df, data_trn, data_val, data_tst, data_rst)
     utter_occ_df = get_utter_occ_df_of_all_symbols(symbols, data_trn, data_val, data_tst, data_rst)
     rel_utter_occ_df=get_rel_utter_occ_df_of_all_symbols(utter_occ_df)
+    uni_dist_df = get_uniform_distr_df_for_occs(symbols, occ_df)
+    rel_uni_dist_df = get_rel_uniform_distr_df_for_occs(symbols)
     full_df = pd.concat([
                 occ_df,
                 rel_occ_df.loc[:, rel_occ_df.columns != "SYMB"],
                 dist_df.loc[:, dist_df.columns != "SYMB"],
                 utter_occ_df.loc[:, utter_occ_df.columns != "SYMB"],
-                rel_utter_occ_df.loc[:, rel_utter_occ_df.columns != "SYMB"]
+                rel_utter_occ_df.loc[:, rel_utter_occ_df.columns != "SYMB"],
+                uni_dist_df.loc[:, uni_dist_df.columns != "SYMB"],
+                rel_uni_dist_df.loc[:, rel_uni_dist_df.columns != "SYMB"]
                 ],
                 axis=1,
                 join='inner')
@@ -25,8 +29,10 @@ def get_ngram_stats(symbols: List[_T], data_trn: List[List[_T]], data_val: List[
 
 def get_rel_uniform_distr_df_for_occs(symbols) -> pd.DataFrame:
     percentage = 100/len(symbols)
-    #df = 
-    pass
+    lines_of_df = [[symb,percentage] for symb in symbols]
+    lines_of_df.append(['all',100])
+    df = pd.DataFrame(lines_of_df, columns=['SYMB','UNI_DISTR_%'])
+    return df
 
 def get_uniform_distr_df_for_occs(symbols: List[_T], occ_df: pd.DataFrame) -> pd.DataFrame:
     uni_distr_df = df_with_uni_distr(symbols, occ_df)
