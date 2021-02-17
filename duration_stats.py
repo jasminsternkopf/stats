@@ -123,16 +123,11 @@ def get_rel_duration_df(durations_df: pd.DataFrame) -> pd.DataFrame:
   durations_df.replace("-",0,inplace=True)
   df_as_row_wise_array = durations_df.to_numpy()
   df_lines = []
-  for row in df_as_row_wise_array[:-1,:]:
+  for row in df_as_row_wise_array:
       rel_durations_list = get_relative_durations_for_all_sets(row[1:])
       rel_durations_list.insert(0, row[0])
       df_lines.append(rel_durations_list)
   df = pd.DataFrame(df_lines, columns = ['SPEAKER','REL_DUR TRN', 'VAL', 'TST', 'RST'])
-  last_line = df.sum()
-  df=df.append(last_line, ignore_index=True)
-  df.iloc[-1,0] ="all"
-  norm_factor = last_line[1:].sum()/100
-  df.iloc[-1, 1:] = df.iloc[-1, 1:].div(norm_factor)
   df.replace(0,"-",inplace=True)
   durations_df.replace(0,"-",inplace=True)
   return df
