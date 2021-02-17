@@ -8,14 +8,14 @@ from typing import TypeVar, Dict, List
 
 _T = TypeVar('_T')
 
-def get_duration_stats(data_total: Dict[str, List[_T]], data_trn: Dict[str, List[_T]], data_val: Dict[str, List[_T]], data_tst: Dict[str, List[_T]], data_rst: Dict[str, List[_T]]) -> pd.DataFrame:
-  meta_dataset = get_meta_dict(data_trn, data_val, data_tst, data_rst, data_total)
-  duration_df = get_duration_df(meta_dataset)
+def get_duration_stats(speakers: List[str], data_trn: Dict[str, List[_T]], data_val: Dict[str, List[_T]], data_tst: Dict[str, List[_T]], data_rst: Dict[str, List[_T]], data_total: Dict[str, List[_T]]) -> pd.DataFrame:
+  meta_dataset = get_meta_dict(speakers, data_trn, data_val, data_tst, data_rst, data_total)
+  duration_df = get_duration_df(speakers, meta_dataset)
   rel_duration_df = get_rel_duration_df(duration_df)
   dist_df = get_dist_df(duration_df)
-  min_df = get_min_df(meta_dataset)
-  max_df = get_max_df(meta_dataset)
-  mean_df = get_mean_df(meta_dataset)
+  min_df = get_min_df(speakers, meta_dataset)
+  max_df = get_max_df(speakers, meta_dataset)
+  mean_df = get_mean_df(speakers, meta_dataset)
   full_df = pd.concat([
       duration_df,
       rel_duration_df.loc[:, rel_duration_df.columns != "SPEAKER"],
@@ -29,8 +29,8 @@ def get_duration_stats(data_total: Dict[str, List[_T]], data_trn: Dict[str, List
   return full_df
 
 
-def get_mean_df(meta_dataset) -> pd.DataFrame:
-  lines_of_df = get_mean_durations_for_every_speaker_for_all_sets(meta_dataset)
+def get_mean_df(speakers: List[str], meta_dataset) -> pd.DataFrame:
+  lines_of_df = get_mean_durations_for_every_speaker_for_all_sets(speakers, meta_dataset)
   df = pd.DataFrame(lines_of_df, columns=['SPEAKER', 'MEAN TRN', 'VAL', 'TST', 'RST','TOTAL'])
   last_line = mean_of_df(df)
   last_line.replace(0,"-",inplace=True)
@@ -44,10 +44,8 @@ def mean_of_df(data: pd.DataFrame) -> pd.Series:
   means.replace(NaN, "-", inplace=True)
   return means
 
-def get_mean_durations_for_every_speaker_for_all_sets(dataset: Dict[str, List[List[_T]]]) -> List[List]:
-  sorted_keylist = list(dataset.keys())
-  sorted_keylist.sort()
-  all_means = [get_mean_durations_for_one_speaker_for_all_sets(speaker,dataset[speaker]) for speaker in sorted_keylist]
+def get_mean_durations_for_every_speaker_for_all_sets(speakers: List[str], dataset: Dict[str, List[List[_T]]]) -> List[List]:
+  all_means = [get_mean_durations_for_one_speaker_for_all_sets(speaker,dataset[speaker]) for speaker in speakers]
   return all_means
 
 def get_mean_durations_for_one_speaker_for_all_sets(speaker,durations_list: List[List[_T]]) -> List:
@@ -55,8 +53,8 @@ def get_mean_durations_for_one_speaker_for_all_sets(speaker,durations_list: List
   means.insert(0, speaker)
   return means
 
-def get_max_df(meta_dataset) -> pd.DataFrame:
-  lines_of_df = get_maximum_durations_for_every_speaker_for_all_sets(meta_dataset)
+def get_max_df(speakers: List[str], meta_dataset) -> pd.DataFrame:
+  lines_of_df = get_maximum_durations_for_every_speaker_for_all_sets(speakers, meta_dataset)
   df = pd.DataFrame(lines_of_df, columns=['SPEAKER', 'MAX TRN', 'VAL', 'TST', 'RST','TOTAL'])
   last_line = maximum_of_df(df)
   last_line.replace(0,"-",inplace=True)
@@ -70,10 +68,8 @@ def maximum_of_df(data: pd.DataFrame) -> pd.Series:
   maxs.replace(0, "-", inplace=True)
   return maxs
 
-def get_maximum_durations_for_every_speaker_for_all_sets(dataset: Dict[str, List[List[_T]]]) -> List[List]:
-  sorted_keylist = list(dataset.keys())
-  sorted_keylist.sort()
-  all_maxima = [get_maximum_durations_for_one_speaker_for_all_sets(speaker,dataset[speaker]) for speaker in sorted_keylist]
+def get_maximum_durations_for_every_speaker_for_all_sets(speakers: List[str], dataset: Dict[str, List[List[_T]]]) -> List[List]:
+  all_maxima = [get_maximum_durations_for_one_speaker_for_all_sets(speaker,dataset[speaker]) for speaker in speakers]
   return all_maxima
 
 def get_maximum_durations_for_one_speaker_for_all_sets(speaker,durations_list: List[List[_T]]) -> List:
@@ -81,8 +77,8 @@ def get_maximum_durations_for_one_speaker_for_all_sets(speaker,durations_list: L
   maxs.insert(0, speaker)
   return maxs
 
-def get_min_df(meta_dataset) -> pd.DataFrame:
-  lines_of_df = get_minimum_durations_for_every_speaker_for_all_sets(meta_dataset)
+def get_min_df(speakers: List[str], meta_dataset) -> pd.DataFrame:
+  lines_of_df = get_minimum_durations_for_every_speaker_for_all_sets(speakers, meta_dataset)
   df = pd.DataFrame(lines_of_df, columns=['SPEAKER', 'MIN TRN', 'VAL', 'TST', 'RST','TOTAL'])
   last_line = minimum_of_df(df)
   df=df.append(last_line, ignore_index=True)
@@ -95,10 +91,8 @@ def minimum_of_df(data: pd.DataFrame) -> pd.Series:
   mins.replace(Infinity, "-", inplace=True)
   return mins
 
-def get_minimum_durations_for_every_speaker_for_all_sets(dataset: Dict[str, List[List[_T]]]) -> List[List]:
-  sorted_keylist = list(dataset.keys())
-  sorted_keylist.sort()
-  all_minima = [get_minimum_durations_for_one_speaker_for_all_sets(speaker,dataset[speaker]) for speaker in sorted_keylist]
+def get_minimum_durations_for_every_speaker_for_all_sets(speakers: List[str], dataset: Dict[str, List[List[_T]]]) -> List[List]:
+  all_minima = [get_minimum_durations_for_one_speaker_for_all_sets(speaker,dataset[speaker]) for speaker in speakers]
   return all_minima
 
 def get_minimum_durations_for_one_speaker_for_all_sets(speaker,durations_list: List[List[_T]]) -> List:
@@ -142,18 +136,16 @@ def get_relative_durations_for_all_sets(duration_list: List[_T]) -> List:
   return rel_durations.tolist()
 
 
-def get_duration_df(meta_dataset: Dict[str, List[List[_T]]]) -> pd.DataFrame:
-  lines_of_df = get_duration_sums_for_every_speaker_for_all_sets(meta_dataset)
+def get_duration_df(speakers: List[str], meta_dataset: Dict[str, List[List[_T]]]) -> pd.DataFrame:
+  lines_of_df = get_duration_sums_for_every_speaker_for_all_sets(speakers, meta_dataset)
   df = pd.DataFrame(lines_of_df, columns=['SPEAKER', 'DUR TRN', 'VAL', 'TST', 'RST','TOTAL'])
   last_line = df.sum()
   df=df.append(last_line, ignore_index=True)
   df.iloc[-1,0] ="all"
   return df
 
-def get_duration_sums_for_every_speaker_for_all_sets(dataset: Dict[str, List[List[_T]]]) -> List[List]:
-  sorted_keylist = list(dataset.keys())
-  sorted_keylist.sort()
-  all_duration_sums = [get_duration_sums_for_one_speaker_for_all_sets(speaker,dataset[speaker]) for speaker in sorted_keylist]
+def get_duration_sums_for_every_speaker_for_all_sets(speakers: List[str], dataset: Dict[str, List[List[_T]]]) -> List[List]:
+  all_duration_sums = [get_duration_sums_for_one_speaker_for_all_sets(speaker,dataset[speaker]) for speaker in speakers]
   return all_duration_sums
 
 def get_duration_sums_for_one_speaker_for_all_sets(speaker,durations_list: List[List[_T]]) -> List:
@@ -161,16 +153,15 @@ def get_duration_sums_for_one_speaker_for_all_sets(speaker,durations_list: List[
   duration_sums.insert(0, speaker)
   return duration_sums
 
-def get_meta_dict(data_trn: Dict[str, List[_T]], data_val: Dict[str, List[_T]], data_tst: Dict[str, List[_T]], data_rst: Dict[str, List[_T]], data_total: Dict[str, List[_T]]) -> Dict[str, List[List[_T]]]:
-  all_keys = {key for key_list in [data_trn.keys(), data_val.keys(), data_tst.keys(), data_rst.keys()] for key in key_list} #alternativ hier keys aus data_total nehmen
-  meta_dict = {key: get_duration_values_for_key(key, data_trn, data_val, data_tst, data_rst, data_total) for key in all_keys}
+def get_meta_dict(speakers: List[str], data_trn: Dict[str, List[_T]], data_val: Dict[str, List[_T]], data_tst: Dict[str, List[_T]], data_rst: Dict[str, List[_T]], data_total: Dict[str, List[_T]]) -> Dict[str, List[List[_T]]]:
+  meta_dict = {speaker: get_duration_values_for_key(speaker, data_trn, data_val, data_tst, data_rst, data_total) for speaker in speakers}
   return meta_dict
 
-def get_duration_values_for_key(key: str, data_trn: Dict[str, List[_T]], data_val: Dict[str, List[_T]], data_tst: Dict[str, List[_T]], data_rst: Dict[str, List[_T]], data_total: Dict[str, List[_T]]) -> List[_T]:
-  values = [duration_or_zero(key, data) for data in [data_trn, data_val, data_tst, data_rst, data_total]]
+def get_duration_values_for_key(speaker: str, data_trn: Dict[str, List[_T]], data_val: Dict[str, List[_T]], data_tst: Dict[str, List[_T]], data_rst: Dict[str, List[_T]], data_total: Dict[str, List[_T]]) -> List[_T]:
+  values = [duration_or_zero(speaker, data) for data in [data_trn, data_val, data_tst, data_rst, data_total]]
   return values
 
-def duration_or_zero(key: str, data: Dict[str, List[_T]]) -> List[_T]:
-  if key in data.keys():
-    return data[key]
+def duration_or_zero(speaker: str, data: Dict[str, List[_T]]) -> List[_T]:
+  if speaker in data.keys():
+    return data[speaker]
   return [0]

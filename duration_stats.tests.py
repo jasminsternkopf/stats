@@ -8,15 +8,16 @@ VAL = {"a": [1,1], "b": [2,1], "c": [1]}
 TEST = {"b":[3,5], "c": [7]}
 REST = {"d": [4,5]}
 TOTAL={"a": [1,2,3,1,1], "b": [3,4,2,1,3,5], "c":[1,7], "d": [1,3,4,4,5]}
+SPEAKERS = ["a","c","b","d","e"]
 
-meta = get_meta_dict(TRAIN, VAL, TEST, REST,TOTAL)
-#print(meta)
+meta = get_meta_dict(SPEAKERS, TRAIN, VAL, TEST, REST,TOTAL)
+print(meta)
 
-full=get_duration_stats(TOTAL, TRAIN, VAL, TEST, REST)
-print(full.head())
+full=get_duration_stats(SPEAKERS, TRAIN, VAL, TEST, REST, TOTAL)
+print(full.head(10))
 
-#df = get_duration_df(meta)
-#print(df.head())
+df = get_duration_df(SPEAKERS, meta)
+#print(df.head(10))
 #d=df.loc[:, df.columns !="SPEAKER"]
 #dsum=d.min()
 #print(dsum)
