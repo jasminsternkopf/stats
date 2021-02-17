@@ -98,4 +98,4 @@ if __name__ == '__main__':
   #print(rel_utter_occ_df.head())
 
   full_df = get_ngram_stats(SYMBOLS, TRAIN, VAL, TEST, REST)
-  print(full_df.head())
+  print(full_df.head(10))

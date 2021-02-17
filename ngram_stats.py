@@ -44,6 +44,7 @@ def get_utter_occ_df_of_all_symbols(symbols: List[_T], data_trn: List[List[_T]],
         utter_occ_list.insert(0, symb)
         df_lines.append(utter_occ_list)
     df = pd.DataFrame(df_lines, columns = ['SYMB','UTT TRN', 'VAL', 'TST', 'RST', 'TOTAL'])
+    df = add_all_line_as_sum_of_previous_lines(df)
     return df
 
 def get_utter_occs_for_all_sets(symb: _T, data_trn: List[List[_T]], data_val: List[List[_T]], data_tst: List[List[_T]], data_rst: List[List[_T]]) -> List[int]:
@@ -64,6 +65,7 @@ def get_dist_among_other_symbols_df_of_all_symbols(occs_df: pd.DataFrame, data_t
         dist_list.insert(0, row[0])
         df_lines.append(dist_list)
     df = pd.DataFrame(df_lines, columns = ['SYMB','DIST TRN', 'VAL', 'TST', 'RST', 'TOTAL'])
+    df = add_all_line_as_sum_of_previous_lines(df)
     return df
 
 def get_dists_among_other_symbols(occs_of_symb: List[int], total_numb_of_symbs: List[int]) -> List[float]:
@@ -100,8 +102,14 @@ def get_occ_df_of_all_symbols(symbols: List[_T], data_trn: List[List[_T]], data_
         occ_list.insert(0, symb)
         df_lines.append(occ_list)
     df = pd.DataFrame(df_lines, columns = ['SYMB','OCC TRN', 'VAL', 'TST', 'RST', 'TOTAL'])
+    df = add_all_line_as_sum_of_previous_lines(df)
     return df
     
+def add_all_line_as_sum_of_previous_lines(df: pd.DataFrame) -> pd.DataFrame:
+    last_line = df.sum()
+    df=df.append(last_line, ignore_index=True)
+    df.iloc[-1,0] ="all"
+    return df
 
 def get_occs_for_all_sets(symb: _T, data_trn: List[List[_T]], data_val: List[List[_T]], data_tst: List[List[_T]], data_rst: List[List[_T]]) -> List[int]:
     occs = [get_occs_of_symb_in_one_set(symb, dataset) for dataset in [data_trn, data_val, data_tst, data_rst]]
