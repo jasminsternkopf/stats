@@ -24,6 +24,8 @@ def get_ngram_stats(symbols: List[_T], data_trn: List[List[_T]], data_val: List[
     return full_df
 
 def get_uniform_distr_df_for_occs(symbols: List[_T], occ_df: pd.DataFrame) -> pd.DataFrame:
+    number_of_all_possible_symbols = len(symbols)
+    all_occs_per_set = occ_df.iloc[-1,1:]
 
 
 def get_rel_utter_occ_df_of_all_symbols(utter_occs_df: pd.DataFrame) -> pd.DataFrame:

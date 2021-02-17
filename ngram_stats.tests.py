@@ -98,4 +98,7 @@ if __name__ == '__main__':
   #print(rel_utter_occ_df.head())
 
   full_df = get_ngram_stats(SYMBOLS, TRAIN, VAL, TEST, REST)
-  print(full_df.head(10))
+  #print(full_df.head(10))
+
+  uni_distr_occ_df = get_uniform_distr_df_for_occs(SYMBOLS, occ_df)
+  print(uni_distr_occ_df)

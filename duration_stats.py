@@ -102,7 +102,7 @@ def get_minimum_durations_for_one_speaker_for_all_sets(speaker,durations_list: L
 
 def get_dist_df(durations_df: pd.DataFrame) -> pd.DataFrame:
   durations_df.replace("-",0,inplace=True)
-  df = durations_df.loc[0:len(durations_df.index)-2, durations_df.columns != FIRST_COL].copy()
+  df = durations_df.iloc[:-1,1:].copy()
   df.columns=['DIST TRN', 'VAL', 'TST', 'RST','TOTAL']
   dataset_lengths = df.sum()
   df = 100* df.div(dataset_lengths)
