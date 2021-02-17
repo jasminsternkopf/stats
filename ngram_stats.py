@@ -23,6 +23,9 @@ def get_ngram_stats(symbols: List[_T], data_trn: List[List[_T]], data_val: List[
                 join='inner')
     return full_df
 
+def get_uniform_distr_df_for_occs(symbols: List[_T], occ_df: pd.DataFrame) -> pd.DataFrame:
+
+
 def get_rel_utter_occ_df_of_all_symbols(utter_occs_df: pd.DataFrame) -> pd.DataFrame:
     df_as_row_wise_array = utter_occs_df.to_numpy()
     df_lines = []
