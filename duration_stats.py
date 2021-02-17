@@ -1,5 +1,5 @@
 from numpy.core.fromnumeric import mean
-from numpy.core.numeric import Infinity
+from numpy.core.numeric import Infinity, NaN
 import pandas as pd
 import numpy as np
 
@@ -39,9 +39,9 @@ def get_mean_df(meta_dataset) -> pd.DataFrame:
   return df
 
 def mean_of_df(data: pd.DataFrame) -> pd.Series:
-  data_without_hyphen = data.replace("-", None)
+  data_without_hyphen = data.replace("-", NaN)
   means = data_without_hyphen.mean()
-  means.replace(0, "-", inplace=True)
+  means.replace(NaN, "-", inplace=True)
   return means
 
 def get_mean_durations_for_every_speaker_for_all_sets(dataset: Dict[str, List[List[_T]]]) -> List[List]:
