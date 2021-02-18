@@ -35,8 +35,11 @@ def get_rel_uniform_distr_df_for_occs(symbols) -> pd.DataFrame:
     return df
 
 def get_uniform_distr_df_for_occs(symbols: List[_T], occ_df: pd.DataFrame) -> pd.DataFrame:
+    occ_df.replace("-",0,inplace=True)
     uni_distr_df = df_with_uni_distr(symbols, occ_df)
     uni_distr_df.columns = ['SYMB','OCC_UNI_DISTR TRN', 'VAL', 'TST', 'RST', 'TOTAL']
+    uni_distr_df.replace(0,"-",inplace=True)
+    occ_df.replace(0,"-",inplace=True)
     return uni_distr_df
 
 def df_with_uni_distr(symbols: List[_T], df: pd.DataFrame) -> pd.DataFrame:
@@ -50,12 +53,15 @@ def df_with_uni_distr(symbols: List[_T], df: pd.DataFrame) -> pd.DataFrame:
 
 def get_rel_utter_occ_df_of_all_symbols(utter_occs_df: pd.DataFrame) -> pd.DataFrame:
     df_as_row_wise_array = utter_occs_df.to_numpy()
+    df_as_row_wise_array[df_as_row_wise_array == "-"]=0
     df_lines = []
     for row in df_as_row_wise_array:
         rel_utter_occ_list = get_relative_utter_occs_for_all_sets(row[1:])
         rel_utter_occ_list.insert(0, row[0])
         df_lines.append(rel_utter_occ_list)
     df = pd.DataFrame(df_lines, columns = ['SYMB','REL_UTT TRN', 'VAL', 'TST', 'RST'])
+    df.replace(0,"-",inplace=True)
+    utter_occs_df.replace(0,"-",inplace=True)
     return df
 
 def get_relative_utter_occs_for_all_sets(utter_occs_list: List[int]) -> List[float]:
@@ -72,6 +78,7 @@ def get_utter_occ_df_of_all_symbols(symbols: List[_T], data_trn: List[List[_T]],
         df_lines.append(utter_occ_list)
     df = pd.DataFrame(df_lines, columns = ['SYMB','UTT TRN', 'VAL', 'TST', 'RST', 'TOTAL'])
     df = add_all_line_as_sum_of_previous_lines(df)
+    df.replace(0,"-",inplace=True)
     return df
 
 def get_utter_occs_for_all_sets(symb: _T, data_trn: List[List[_T]], data_val: List[List[_T]], data_tst: List[List[_T]], data_rst: List[List[_T]]) -> List[int]:
@@ -84,6 +91,7 @@ def get_utter_occs_of_symbol_in_one_set(symb: _T, dataset: List[List[_T]]) -> in
     return sum(symb_is_in_sublist)
 
 def get_dist_among_other_symbols_df_of_all_symbols(occs_df: pd.DataFrame, data_trn: List[List[_T]], data_val: List[List[_T]], data_tst: List[List[_T]], data_rst: List[List[_T]]) -> pd.DataFrame:
+    occs_df.replace("-",0,inplace=True)
     df_as_row_wise_array = occs_df.to_numpy()
     df_lines = []
     total_symb_numbers = get_total_numbers_of_symbols_for_all_sets(data_trn, data_val, data_tst, data_rst)
@@ -92,6 +100,8 @@ def get_dist_among_other_symbols_df_of_all_symbols(occs_df: pd.DataFrame, data_t
         dist_list.insert(0, row[0])
         df_lines.append(dist_list)
     df = pd.DataFrame(df_lines, columns = ['SYMB','DIST TRN', 'VAL', 'TST', 'RST', 'TOTAL'])
+    df.replace(0,"-",inplace=True)
+    occs_df.replace(0,"-",inplace=True)
     return df
 
 def get_dists_among_other_symbols(occs_of_symb: List[int], total_numb_of_symbs: List[int]) -> List[float]:
@@ -112,6 +122,7 @@ def total_number_of_symbols_in_dataset(dataset: List[List[_T]]) -> int:
     return sum(lens_of_sublists)
 
 def get_rel_occ_df_of_all_symbols(occs_df: pd.DataFrame) -> pd.DataFrame:
+    occs_df.replace("-",0,inplace=True)
     df_as_row_wise_array = occs_df.to_numpy()
     df_lines = []
     for row in df_as_row_wise_array:
@@ -119,6 +130,8 @@ def get_rel_occ_df_of_all_symbols(occs_df: pd.DataFrame) -> pd.DataFrame:
         rel_occ_list.insert(0, row[0])
         df_lines.append(rel_occ_list)
     df = pd.DataFrame(df_lines, columns = ['SYMB','REL_OCC TRN', 'VAL', 'TST', 'RST'])
+    df.replace(0,"-",inplace=True)
+    occs_df.replace(0,"-",inplace=True)
     return df
 
 def get_relative_occs_for_all_sets(occs_list: np.array) -> List[float]:
@@ -135,6 +148,7 @@ def get_occ_df_of_all_symbols(symbols: List[_T], data_trn: List[List[_T]], data_
         df_lines.append(occ_list)
     df = pd.DataFrame(df_lines, columns = ['SYMB','OCC TRN', 'VAL', 'TST', 'RST', 'TOTAL'])
     df = add_all_line_as_sum_of_previous_lines(df)
+    df.replace(0,"-",inplace=True)
     return df
     
 def add_all_line_as_sum_of_previous_lines(df: pd.DataFrame) -> pd.DataFrame:
